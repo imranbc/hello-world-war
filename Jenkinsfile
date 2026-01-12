@@ -1,5 +1,4 @@
 pipeline {
-stage any
 stages {
 stage('checkout') {
 steps {
