@@ -1,0 +1,41 @@
+pipeline {
+    agent any
+    stages {
+        stage('checkout') {
+            steps {
+                sh "rm -rf *"
+                sh 'git clone https://github.com/imranbc/hello-world-war.git'
+            }
+        }
+           stage('Build') {
+            steps {
+                   sh '''
+                    ls
+                    pwd
+                    cd hello-world-war
+                    echo $PWd
+                    ls
+                    mvn clean package
+                    echo "build completed"
+                '''
+            }
+        }
+           stage('Deploy') {
+            steps {
+                  sh '''
+                    echo "Deploying WAR to Tomcat"
+
+                    # Copy WAR file to Tomcat webapps
+                    sudo cp hello-world-war-1.0.0.war /opt/apache-tomcat-11.0.15/webapps/
+
+                    # Restart Tomcat
+                    sudo /opt/tomcat/bin/shutdown.sh || true
+                    sleep 5
+                    sudo /opt/tomcat/bin/startup.sh
+
+                    echo "Deployment completed"
+                '''
+            }
+        }
+    }
+}
